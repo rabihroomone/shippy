@@ -7,7 +7,7 @@ import (
 	// Import the generated protobuf code
 	micro "github.com/micro/go-micro"
 	pb "github.com/rabihroomone/shippy/consignment-service/proto/consignment"
-	//vesselProto "github.com/shippy/vessel-service/proto/vessel"
+	vesselProto "github.com/rabihroomone/shippy/vessel-service/proto/vessel"
 	"golang.org/x/net/context"
 )
 
@@ -42,7 +42,7 @@ func (repo *Repository) GetAll() []*pb.Consignment {
 // to give you a better idea.
 type service struct {
 	repo         IRepository
-	//vesselClient vesselProto.VesselServiceClient
+	vesselClient vesselProto.VesselServiceClient
 }
 
 func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
@@ -75,14 +75,14 @@ func main() {
 		micro.Version("latest"),
 	)
 
-	//vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
+	vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
 
 	srv.Init()
 
 	// Register our service with the gRPC server, this will tie our
 	// implementation into the auto-generated interface code for our
 	// protobuf definition.
-	pb.RegisterShippingServiceHandler(srv.Server(), &service{repo})//, vesselClient})
+	pb.RegisterShippingServiceHandler(srv.Server(), &service{repo, vesselClient})
 
 	if err := srv.Run(); err != nil {
 		log.Fatalf("failed to serve: %v", err)
